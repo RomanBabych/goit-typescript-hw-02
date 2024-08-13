@@ -9,18 +9,29 @@ import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "../ImageModal/ImageModal";
 import { fetchImages } from "../../images-api";
 
-export default function App() {
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [totalPages, setTotalPages] = useState(0);
-  const lastGalleryItemRef = useRef();
+export type Image = {
+  id: string;
+  urls: {
+    small: string;
+    regular: string;
+  };
+  alt_description: string;
+};
 
-  const handleSearch = (newQuery) => {
-    if (newQuery === query) return; // предотвращение повторного поиска того же запроса
+type Error = string | null;
+
+export default function App() {
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error>(null);
+  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const lastGalleryItemRef = useRef<HTMLLIElement | null>(null);
+
+  const handleSearch = (newQuery: string) => {
+    if (newQuery === query) return;
     setQuery(newQuery);
     setPage(1);
     setImages([]);
@@ -33,17 +44,15 @@ export default function App() {
       setLoading(true);
 
       try {
-        const { images: fetchedImages, totalPages } = await fetchImages(
-          query,
-          page
-        );
+        const { images: fetchedImages, totalPages } = await fetchImages(query, page);
         setImages((prevImages) =>
           page === 1 ? fetchedImages : [...prevImages, ...fetchedImages]
         );
         setTotalPages(totalPages);
       } catch (error) {
-        setError(error.message);
-        toast.error(error.message);
+        const errorMessage = (error as { message?: string }).message || "An unknown error occurred";
+        setError(errorMessage);
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }

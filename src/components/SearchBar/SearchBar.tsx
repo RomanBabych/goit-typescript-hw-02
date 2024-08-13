@@ -1,19 +1,21 @@
 import css from "./SearchBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-
-import {
-  Formik,
-  Form,
-  Field,
-  ErrorMessage as FormikErrorMessage,
-} from "formik";
+import { Formik, Form, Field, ErrorMessage as FormikErrorMessage } from "formik";
 import toast from "react-hot-toast";
 
-export default function SearchBar({ onSubmit }) {
-  const initialValues = { query: "" };
+type SearchBarProps = {
+  onSubmit: (query: string) => void;
+};
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
+type FormValues = {
+  query: string;
+};
+
+export default function SearchBar({ onSubmit }: SearchBarProps) {
+  const initialValues: FormValues = { query: "" };
+
+  const handleSubmit = (values: FormValues, { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }) => {
     if (values.query.trim() === "") {
       toast.error("Please enter a search query");
       setSubmitting(false);
