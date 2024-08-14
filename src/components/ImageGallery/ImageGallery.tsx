@@ -1,5 +1,6 @@
 import React from "react";
 import { Image } from "../App/App";
+import css from "./ImageGallery.module.css"
 
 interface ImageGalleryProps {
   images: Image[];
@@ -9,9 +10,9 @@ interface ImageGalleryProps {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, onClick, lastItemRef }) => {
   return (
-    <ul>
+    <ul className={css.galleryList}>
       {images.map((image) => (
-        <li
+        <li className={css.galleryListItem}
           key={image.id}
           ref={lastItemRef}
           onClick={() => onClick(image)}
